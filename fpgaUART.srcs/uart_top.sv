@@ -32,26 +32,43 @@ logic baud_tick; // Baud tick signal, indicating when to sample the next bit whe
 typedef enum logic [1:0] {
     IDLE, START, DATA, STOP
 } uart_state_t;
-uart_state_t state, state_next;
+uart_state_t state;
 
 // State transition logic
 always_ff @(posedge clk or negedge arstn) begin
     if (!arstn) begin
-        state <= IDLE;
+        state <= IDLE; // Reset to IDLE state
+        data_out <= 8'b0; // Clear output data on reset
     end else begin
-        state <= state_next;
+        case (state)
+            IDLE: 
+                if (start) state <= START; // Transition to START state on start signal
+            START:
+                if (baud_tick) state <= DATA; // Transition to DATA state after start bit
+            DATA: 
+                if (bit_counter == 4'd7 && baud_tick) begin
+                    state <= STOP; // If all 8 bits are sent, transition to STOP
+                end else if (baud_tick) begin
+                    state <= DATA; // Remain in DATA state until all bits are sent
+                end
+            STOP: 
+                if (baud_tick) begin
+                    state <= IDLE; // Transition back to IDLE after stop bit
+                    data_out <= tx_shift_reg; // Output the transmitted data
+                end
+
+            default: state <= IDLE; // Default case to handle unexpected states
+        endcase
     end
 end
 
-// State machine next state logic
+// TX output logic
 always_comb begin
-    state_next = state;
     case (state)
-        IDLE: state_next = (start) ? START : IDLE;        
-        START: state_next = (baud_tick) ? DATA : START;        
-        DATA: state_next = (bit_counter == 4'd7 && baud_tick) ? STOP : DATA;        
-        STOP: state_next = (baud_tick) ? IDLE : STOP;
-        default: state_next = IDLE; // Default case to handle unexpected states   
+        IDLE:  tx_output = 1'b1;
+        START: tx_output = 1'b0;
+        DATA:  tx_output = tx_shift_reg[0];
+        STOP:  tx_output = 1'b1;
     endcase
 end
 
@@ -60,14 +77,17 @@ always_ff @(posedge clk or negedge arstn) begin
     if (!arstn) begin
         baud_counter <= 0;
         baud_tick <= 1'b0; // No tick on reset
-    end else begin
-        if (baud_counter < BAUD_PERIOD - 1) begin
-            baud_counter <= baud_counter + 1;
-            baud_tick <= 1'b0; // No tick until counter reaches period
-        end else begin
-            baud_counter <= 0; // Reset counter after reaching period
+    end else if (state != IDLE) begin
+        if (baud_counter == BAUD_PERIOD - 1) begin
+            baud_counter <= 0;
             baud_tick <= 1'b1; // Generate tick signal
+        end else begin
+            baud_counter <= baud_counter + 1;
+            baud_tick <= 1'b0; // No tick signal until counter reaches period
         end
+    end else begin
+        baud_counter <= 0; // Reset counter when not busy
+        baud_tick <= 1'b0; // No tick signal when not busy
     end
 end
 
@@ -87,30 +107,17 @@ end
 always_ff @(posedge clk or negedge arstn) begin
     if (!arstn)
         tx_shift_reg <= 0;
-    else if (state == START && baud_tick)
+    else if (state == START)
         tx_shift_reg <= data_in;                    // Load data with start bit
     else if (state == DATA && baud_tick)
-        tx_shift_reg <= {1'b0, tx_shift_reg[7:1]};  // Shift left for next bit
-end
-
-// TX output logic
-always_ff @(posedge clk or negedge arstn) begin
-    if (!arstn) tx_output <= 1'b1; // Idle state is high
-    else if (baud_tick) begin
-        case (state)
-            START: tx_output <= 1'b0; // Start bit is low
-            DATA: tx_output <= tx_shift_reg[0]; // Transmit current bit
-            STOP: tx_output <= 1'b1; // Stop bit is high
-            default: tx_output <= 1'b1; // Default to idle state
-        endcase
-    end
+        tx_shift_reg <= {1'b0, tx_shift_reg[7:1]};  // Shift right for next bit
 end
 
 // Busy flag logic
-always_ff @(posedge clk or negedge arstn) begin
+always_comb begin
     if (!arstn)
-        tx_busy <= 1'b0; // Not busy on reset
+        tx_busy = 1'b0; // Not busy on reset
     else
-        tx_busy <= (state != IDLE); // Busy if not in IDLE state
+        tx_busy = (state != IDLE); // Busy if not in IDLE state
 end
 endmodule
