@@ -1,0 +1,7 @@
+0.7
+2020.2
+Oct 13 2023
+20:47:58
+D:/Projects/Vivado/fpgaUART/fpgaUART.sim/sim_1/behav/xsim/glbl.v,1697210495,verilog,,,,glbl,,uvm,,,,,,
+D:/Projects/Vivado/fpgaUART/fpgaUART.srcs/sim_1/new/uart_gen_tb.sv,1750163475,systemVerilog,,,,uart_gen_tb,,uvm,,,,,,
+D:/Projects/Vivado/fpgaUART/fpgaUART.srcs/uart_top.sv,1750163125,systemVerilog,,D:/Projects/Vivado/fpgaUART/fpgaUART.srcs/sim_1/new/uart_gen_tb.sv,,uart_gen;uart_top,,uvm,,,,,,
