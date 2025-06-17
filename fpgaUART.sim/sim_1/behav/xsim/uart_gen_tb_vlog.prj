@@ -1,6 +1,6 @@
 # compile verilog/system verilog design source files
 sv xil_defaultlib  \
-"../../../../fpgaUART.srcs/uart_top.sv" \
+"../../../../fpgaUART.srcs/uart_gen.sv" \
 "../../../../fpgaUART.srcs/sim_1/new/uart_gen_tb.sv" \
 
 # compile glbl module
