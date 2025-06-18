@@ -4,4 +4,5 @@ Oct 13 2023
 20:47:58
 D:/Projects/Vivado/fpgaUART/fpgaUART.sim/sim_1/behav/xsim/glbl.v,1697210495,verilog,,,,glbl,,uvm,,,,,,
 D:/Projects/Vivado/fpgaUART/fpgaUART.srcs/sim_1/new/uart_gen_tb.sv,1750250096,systemVerilog,,,,uart_gen_tb,,uvm,,,,,,
-D:/Projects/Vivado/fpgaUART/fpgaUART.srcs/uart_gen.sv,1750180397,systemVerilog,,D:/Projects/Vivado/fpgaUART/fpgaUART.srcs/sim_1/new/uart_gen_tb.sv,,uart_gen,,uvm,,,,,,
+D:/Projects/Vivado/fpgaUART/fpgaUART.srcs/sim_1/new/uart_packet_partition_tb.sv,1750258398,systemVerilog,,,,uart_packet_partition_tb,,uvm,,,,,,
+D:/Projects/Vivado/fpgaUART/fpgaUART.srcs/uart_gen.sv,1750258612,systemVerilog,,D:/Projects/Vivado/fpgaUART/fpgaUART.srcs/sim_1/new/uart_packet_partition_tb.sv,,uart_gen;uart_packet_partition,,uvm,,,,,,
