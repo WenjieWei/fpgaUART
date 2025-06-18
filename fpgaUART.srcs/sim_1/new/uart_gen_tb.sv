@@ -45,7 +45,7 @@ module uart_gen_tb;
 
         // Test case: Send a byte of data
         #10;
-        data_in = 8'hA5; // Example data to send
+        data_in = 8'b10100111; // Example data to send
         start = 1; // Assert start signal to begin transmission
         #10;
         start = 0; // Deassert start signal
