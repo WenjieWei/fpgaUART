@@ -115,7 +115,7 @@ always_comb begin
         tx_busy = (state != IDLE); // Busy if not in IDLE state
 end
 endmodule
-
+/*
 module uart_packet_partition #(
         parameter TDATA_WIDTH = 16,                 // Width of the data bus
         parameter UART_PACKET_SIZE = 8              // Size of the UART packet
@@ -170,3 +170,4 @@ always_ff @(posedge clk or negedge arstn) begin
     end
 end
 endmodule
+*/
