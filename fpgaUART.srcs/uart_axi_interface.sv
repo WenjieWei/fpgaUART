@@ -17,10 +17,8 @@ module uart_axi_interface #(
     input logic s_axis_tvalid,    // valid flag from fft
     input logic uart_busy,          // UART is busy sending data. halts AXI feed
     
-    output logic                   s_axis_tready,    // This module is ready. TODO: maybe feed start? 
-    
-    // Serial port TX output
-    output logic                   uart_tx
+    output logic s_axis_tready,    // This module is ready. TODO: maybe feed start? 
+    output logic [7:0] s_axis_data_output       // byte to be sent to uart_gen
 );
     
     // Define state machine of the AXI module
@@ -33,16 +31,15 @@ module uart_axi_interface #(
     logic [$clog2(NUM_BYTES)-1:0]   byte_idx;
 
     // Extracted sub-bytes, start pulses, and UART busy signals
-    logic  [7:0] byte_to_send;
     logic        start_byte;
-    // wire uart_busy;  // UART busy should be input from uart_gen, not an internal wire here. 
 
     // AXI4-Stream Handshake: Only pull up ready when idle
     assign s_axis_tready = (state == IDLE);
 
     // Decompose bytes: LSB byte_idx=0, slice in order from high to low
     always_comb begin
-        byte_to_send = data_buf[ byte_idx*8 +: 8 ];
+        byte_to_send = data_buf[byte_idx * 8 +: 8];
+        // equivalence: byte_to_send = byte_idx == 0 ? data_buf[7:0] : data_buf[15:8]
     end
 
     // Status register (including asynchronous reset)

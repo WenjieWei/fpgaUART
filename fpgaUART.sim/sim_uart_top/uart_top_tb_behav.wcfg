@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="7,560.567 ns"></ZoomStartTime>
-      <ZoomEndTime time="7,827.168 ns"></ZoomEndTime>
-      <Cursor1Time time="7,642.167 ns"></Cursor1Time>
+      <ZoomStartTime time="1,309,742.388 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,312,630.389 ns"></ZoomEndTime>
+      <Cursor1Time time="1,311,142.388 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="239"></NameColumnWidth>
+      <NameColumnWidth column_width="128"></NameColumnWidth>
       <ValueColumnWidth column_width="58"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="21" />
@@ -31,6 +31,7 @@
    <wvobject fp_name="/uart_top_tb/data_in" type="array">
       <obj_property name="ElementShortName">data_in[15:0]</obj_property>
       <obj_property name="ObjectShortName">data_in[15:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/uart_top_tb/tdata_valid" type="logic">
       <obj_property name="ElementShortName">tdata_valid</obj_property>
@@ -63,14 +64,11 @@
    <wvobject fp_name="/uart_top_tb/dut/uart_axi_inst/data_buf" type="array">
       <obj_property name="ElementShortName">data_buf[15:0]</obj_property>
       <obj_property name="ObjectShortName">data_buf[15:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/uart_top_tb/dut/uart_axi_inst/byte_idx" type="array">
       <obj_property name="ElementShortName">byte_idx[0:0]</obj_property>
       <obj_property name="ObjectShortName">byte_idx[0:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/uart_top_tb/dut/uart_axi_inst/byte_to_send" type="array">
-      <obj_property name="ElementShortName">byte_to_send[7:0]</obj_property>
-      <obj_property name="ObjectShortName">byte_to_send[7:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/uart_top_tb/dut/uart_axi_inst/start_byte" type="logic">
       <obj_property name="ElementShortName">start_byte</obj_property>
@@ -79,6 +77,7 @@
    <wvobject fp_name="/uart_top_tb/dut/uart_inst/data_in" type="array">
       <obj_property name="ElementShortName">data_in[7:0]</obj_property>
       <obj_property name="ObjectShortName">data_in[7:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/uart_top_tb/dut/uart_inst/start" type="logic">
       <obj_property name="ElementShortName">start</obj_property>
@@ -99,9 +98,15 @@
    <wvobject fp_name="/uart_top_tb/dut/uart_inst/baud_counter" type="array">
       <obj_property name="ElementShortName">baud_counter[15:0]</obj_property>
       <obj_property name="ObjectShortName">baud_counter[15:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/uart_top_tb/dut/uart_inst/state" type="array">
       <obj_property name="ElementShortName">state[1:0]</obj_property>
       <obj_property name="ObjectShortName">state[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/uart_top_tb/dut/uart_axi_inst/s_axis_data_output" type="array">
+      <obj_property name="ElementShortName">s_axis_data_output[7:0]</obj_property>
+      <obj_property name="ObjectShortName">s_axis_data_output[7:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
 </wave_config>

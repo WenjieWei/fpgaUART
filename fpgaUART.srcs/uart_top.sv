@@ -29,7 +29,7 @@ uart_axi_interface uart_axi_inst (
     .uart_busy(uart_tx_busy),
 
     // outputs to uart_gen
-    .uart_tx(axi_data_out),                         // Processed 8-bit data to be sent to UART
+    .s_axis_data_output(axi_data_out),                         // Processed 8-bit data to be sent to UART
     // TODO: check if the usage of tready is correct
     .s_axis_tready(uart_start)                      // Start signal for UART transmission
 );
@@ -39,7 +39,7 @@ uart_gen uart_inst (
     .clk(clk),
     .arstn(arstn),
     .data_in(axi_data_out),                                     // data from AXI
-    .start(start),                                  // Start signal for transmission  
+    .start(uart_start),                                  // Start signal for transmission  
     
     .tx_busy(uart_tx_busy),
     .data_out(data_out),
