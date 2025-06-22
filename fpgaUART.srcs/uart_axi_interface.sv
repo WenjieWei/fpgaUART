@@ -62,14 +62,6 @@ module uart_axi_interface #(
                     next_state = IDLE;
 
             SEND_BYTE:
-                // Send one byte at a time, waiting for the UART to be ready.
-                // If the UART is busy, stay in SEND_BYTE state.
-                // If UART is idle again, that means the byte has been sent, transition to DONE
-                /*
-                if (!uart_busy && !uart_tx_complete) begin
-                    // Not the last byte, but tx_complete signal not received, continue
-                    if (byte_idx < NUM_BYTES - 1 && !uart_tx_complete)
-                        next_state = SEND_BYTE;*/
                 if (!uart_busy) begin
                     if (byte_idx < NUM_BYTES - 1) begin
                         if (uart_tx_complete) byte_idx = byte_idx + 1; // Increment byte index
@@ -122,39 +114,6 @@ module uart_axi_interface #(
             endcase
         end
     end
-
-    // TODO: not sure what does this block do
-    // start_byte is an internal signal and doesn't drive any other output
-    // Generate a single-cycle start_byte pulse to drive uart_gen.
-    /*
-    always_ff @(posedge clk or negedge arstn) begin
-        if (!arstn) begin
-            start_byte <= 1'b0;
-            byte_idx <= 0; // Reset byte index on reset
-        end else begin
-            start_byte <= 1'b0;
-            // From IDLE to SEND_BYTE, or at the end of each SEND_BYTE cycle
-            if (state==IDLE     && next_state==SEND_BYTE) start_byte <= 1'b1;
-            if (state==SEND_BYTE && next_state==SEND_BYTE && !uart_busy)
-                start_byte <= 1'b1;
-        end
-    end*/
-
-    // Instantiate the UART transmitter, passing in the clock and baud rate parameters.
-    /*
-    uart_gen #(
-        .CLK_FREQ  (CLK_FREQ),
-        .BAUD_RATE (BAUD_RATE)
-    ) uart_i (
-        .clk        (clk),
-        .arstn      (arstn),
-        .data_in    (byte_to_send),
-        .start      (start_byte),
-        .tx_output  (uart_tx),
-        .tx_busy    (uart_busy),
-        .data_out   ()        // 
-    );*/
-
 endmodule
 
    
