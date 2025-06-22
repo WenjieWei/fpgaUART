@@ -13,7 +13,7 @@ module uart_top #(
     output logic [7:0] data_out                     // Data output to UART generator
 );
 
-logic uart_tx_busy, uart_start;
+logic uart_tx_busy, uart_start, uart_tx_complete;
 logic [7:0] axi_data_out;                           // Data output from UART generator
 
 uart_axi_interface uart_axi_inst (
@@ -27,11 +27,12 @@ uart_axi_interface uart_axi_inst (
 
     // Input from uart_gen
     .uart_busy(uart_tx_busy),
+    .uart_tx_complete(uart_tx_complete),
 
     // outputs to uart_gen
     .s_axis_data_output(axi_data_out),                         // Processed 8-bit data to be sent to UART
     // TODO: check if the usage of tready is correct
-    .s_axis_tready(uart_start)                      // Start signal for UART transmission
+    .s_axis_uart_ready(uart_start)
 );
 
 // Instantiate the UART generator module
@@ -43,6 +44,7 @@ uart_gen uart_inst (
     
     .tx_busy(uart_tx_busy),
     .data_out(data_out),
+    .tx_complete(uart_tx_complete), 
     
     .tx_output(tx_output)
 );   

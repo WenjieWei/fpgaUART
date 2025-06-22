@@ -25,6 +25,7 @@ module uart_top_tb;
 
     // Testbench stimulus
     initial begin
+        #2;
         arstn = 0;
         data_in = 16'b1010_0111_0010_0110; // Example AXI data
         tdata_valid = 0;
@@ -34,6 +35,7 @@ module uart_top_tb;
 
         // Send AXI data
         #10 tdata_valid = 1;
+        #1000 tdata_valid = 0; // Hold valid for a while
 
         // Wait for transmission to complete
         #100000;

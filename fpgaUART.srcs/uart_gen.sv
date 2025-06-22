@@ -11,6 +11,7 @@ module uart_gen #(
 
     output var logic tx_output,         // Transmit output
     output var logic tx_busy,           // Transmission busy signal
+    output var logic tx_complete,       // Transmission complete signal
     output var logic [7:0] data_out     // Data output
 );
 
@@ -28,30 +29,36 @@ typedef enum logic [1:0] {
 } uart_state_t;
 uart_state_t state;
 
+//assign tx_complete = (state == STOP);
 // State transition logic
 always_ff @(posedge clk or negedge arstn) begin
     if (!arstn) begin
         state <= IDLE; // Reset to IDLE state
         data_out <= 8'b0; // Clear output data on reset
+        tx_complete <= 1'b0; // Clear transmission complete flag
     end else begin
         case (state)
             IDLE: 
-                if (start) state <= START; // Transition to START state on start signal
+                if (start) begin
+                    state <= START; // Transition to START state on start signal
+                    tx_complete <= 1'b0; // Indicate transmission is complete
+                end
             START:
                 if (baud_tick) state <= DATA; // Transition to DATA state after start bit
             DATA: 
-                if (bit_counter == 4'd7 && baud_tick) begin
+                if (bit_counter == 4'd7 && baud_tick)
                     state <= STOP; // If all 8 bits are sent, transition to STOP
-                end else if (baud_tick) begin
+                else if (baud_tick)
                     state <= DATA; // Remain in DATA state until all bits are sent
-                end
-            STOP: 
+            STOP:           
                 if (baud_tick) begin
                     state <= IDLE; // Transition back to IDLE after stop bit
                     data_out <= tx_shift_reg; // Output the transmitted data
+                    tx_complete <= 1'b1; // Set transmission complete flag
                 end
 
-            default: state <= IDLE; // Default case to handle unexpected states
+            default:  
+                state <= IDLE; // Default case to handle unexpected states
         endcase
     end
 end
