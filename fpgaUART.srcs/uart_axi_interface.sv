@@ -3,7 +3,6 @@
 module uart_axi_interface #( 
     
     parameter int TDATA_WIDTH = 16,                  // Data width from fft
-    //parameter int NUM_BYTES   = (TDATA_WIDTH+7)/8,   // AXI bus width TODO: not sure what does +7 mean
     parameter int NUM_BYTES   = (TDATA_WIDTH + 7) / 8,     // AXI bus width, assuming TDATA_WIDTH is a multiple of 8
     parameter int CLK_FREQ    = 100_000_000,         // system clock frequency
     parameter int BAUD_RATE   =   9600               // UART baud rate

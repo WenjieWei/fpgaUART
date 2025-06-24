@@ -29,7 +29,6 @@ typedef enum logic [1:0] {
 } uart_state_t;
 uart_state_t state;
 
-//assign tx_complete = (state == STOP);
 // State transition logic
 always_ff @(posedge clk or negedge arstn) begin
     if (!arstn) begin
@@ -122,59 +121,3 @@ always_comb begin
         tx_busy = (state != IDLE); // Busy if not in IDLE state
 end
 endmodule
-/*
-module uart_packet_partition #(
-        parameter TDATA_WIDTH = 16,                 // Width of the data bus
-        parameter UART_PACKET_SIZE = 8              // Size of the UART packet
-    )(
-        // System ports
-        input logic clk,                            // Clock input
-        input logic arstn,                          // Reset input
-
-        // Inputs from UART generator
-        input logic uart_ready,                     // UART ready signal
-
-        // Inputs from AXI interface 
-        input logic axi_valid,                      // AXI valid signal from AXI interface
-        input logic axi_ready,                      // AXI ready signal from AXI interface
-        input logic [TDATA_WIDTH-1:0] axi_data,     // Data input from AXI interface
-        
-        // Outputs
-        output logic [7:0] uart_data,               // Data output to UART generator
-        output logic start                          // Start signal for UART transmission
-    );
-
-// Internal signals
-parameter int UART_PACKETS = TDATA_WIDTH / UART_PACKET_SIZE; // Number of 8-bit packets in the AXI data 
-logic [TDATA_WIDTH-1:0] data_buffer;                // Buffer to hold the AXI data
-logic [$clog2(UART_PACKETS):0] packet_count;        // Counter for the number of packets sent
-logic [7:0] packet_buffer;                          // Buffer to hold the current 8-bit packet
-logic data_partition_complete;                      // Flag to indicate if the data partitioning is complete
-logic data_loaded;                                  // Flag to indicate if data has been loaded into the buffer
-
-// Logic to partition the data packet from AXI into 8-bit packets for UART transmission
-always_ff @(posedge clk or negedge arstn) begin
-    if (!arstn) begin
-        data_buffer <= 'd0; // Clear the data buffer on reset
-        packet_count <= 'd0; // Reset packet count
-        packet_buffer <= 'd0; // Clear packet buffer
-        data_partition_complete <= 1'b0; // Clear partition complete flag
-        data_loaded <= 1'b0; // Clear data loaded flag
-    end else begin
-        if (!data_loaded) begin
-            data_buffer <= axi_data; // Load data from AXI interface
-            data_loaded <= 1'b1; // Set data loaded flag
-        end 
-        else if (!data_partition_complete && data_loaded && uart_ready) begin
-            packet_buffer <= data_buffer[UART_PACKET_SIZE-1:0]; // Get the first 8 bits
-            uart_data <= packet_buffer; // Output the 8-bit packet to UART generator
-            data_buffer <= data_buffer >> UART_PACKET_SIZE; // Shift the buffer to get the next packet
-            packet_count <= packet_count + 1; // Increment the packet count
-            if (packet_count == UART_PACKETS - 1) 
-                data_partition_complete <= 1'b1; // Set partition complete flag when all packets are sent
-            start <= 1'b1; // Set start signal for UART transmission
-        end
-    end
-end
-endmodule
-*/
