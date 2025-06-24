@@ -76,6 +76,8 @@ module uart_axi_interface #(
                 if (byte_idx >= NUM_BYTES - 1) begin
                     next_state = IDLE; // All bytes sent, go back to IDLE
                     byte_idx <= 0; // Reset byte index for next packet
+                    data_buf <= '0; // Clear data buffer
+                    s_axis_uart_ready <= 1'b0; // Not ready to send more bytes
                 end
 
             default:
