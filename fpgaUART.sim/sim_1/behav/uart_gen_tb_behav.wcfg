@@ -12,14 +12,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0.000000000 ms"></ZoomStartTime>
-      <ZoomEndTime time="31.160000001 ms"></ZoomEndTime>
-      <Cursor1Time time="1.041645000 ms"></Cursor1Time>
+      <ZoomEndTime time="55.247500002 ms"></ZoomEndTime>
+      <Cursor1Time time="0.001000000 ms"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="225"></NameColumnWidth>
+      <NameColumnWidth column_width="188"></NameColumnWidth>
       <ValueColumnWidth column_width="58"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="11" />
+   <WVObjectSize size="12" />
    <wvobject fp_name="/uart_gen_tb/arstn" type="logic">
       <obj_property name="ElementShortName">arstn</obj_property>
       <obj_property name="ObjectShortName">arstn</obj_property>
@@ -49,6 +49,10 @@
    <wvobject fp_name="/uart_gen_tb/tx_output" type="logic">
       <obj_property name="ElementShortName">tx_output</obj_property>
       <obj_property name="ObjectShortName">tx_output</obj_property>
+   </wvobject>
+   <wvobject fp_name="/uart_gen_tb/dut/tx_complete" type="logic">
+      <obj_property name="ElementShortName">tx_complete</obj_property>
+      <obj_property name="ObjectShortName">tx_complete</obj_property>
    </wvobject>
    <wvobject fp_name="/uart_gen_tb/tx_busy" type="logic">
       <obj_property name="ElementShortName">tx_busy</obj_property>

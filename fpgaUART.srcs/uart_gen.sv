@@ -22,6 +22,7 @@ logic [15:0] baud_counter; // Counter for baud rate generation
 logic [3:0] bit_counter; // Counter for the number of bits transmitted
 logic [7:0] tx_shift_reg; // Shift register for data transmission
 logic baud_tick; // Baud tick signal, indicating when to sample the next bit when 1
+logic tx_complete_rst;
 
 // UART FSM definition
 typedef enum logic [1:0] {
@@ -38,7 +39,7 @@ always_ff @(posedge clk or negedge arstn) begin
     end else begin
         case (state)
             IDLE: 
-                if (start) begin
+                if (start) begin 
                     state <= START; // Transition to START state on start signal
                     tx_complete <= 1'b0; // Indicate transmission is complete
                 end

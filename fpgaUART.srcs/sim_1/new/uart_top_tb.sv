@@ -2,19 +2,19 @@
 
 module uart_top_tb;
     logic clk, arstn;
-    logic [15:0] data_in; // 16-bit data from fft
-    logic tdata_valid; // Data valid signal from FFT
+    logic [15:0] s_axis_tdata; // 16-bit data from fft
+    logic tvalid; // Data valid signal from FFT
     logic uart_tx_output; // UART transmit output
-    logic [7:0] data_out; // Data output to UART generator
+    logic [7:0] data_aix_uart; // Data output to UART generator
 
     // Instantiate the DUT (uart_top)
     uart_top dut (
         .clk(clk),
         .arstn(arstn),
-        .data_in(data_in),
-        .tdata_valid(tdata_valid),
+        .s_axis_tdata(s_axis_tdata),
+        .tvalid(tvalid),
         .uart_tx_output(uart_tx_output),
-        .data_out(data_out)
+        .data_aix_uart(data_aix_uart)
     );
 
     // Generate clock signal
@@ -22,23 +22,29 @@ module uart_top_tb;
         clk = 0;
         forever #5 clk = ~clk; // 100MHz clock
     end
+    
+    // toggle off tvalid when 
 
     // Testbench stimulus
     initial begin
         #2;
         arstn = 0;
-        data_in = 16'b1010_0111_0010_0110; // Example AXI data
-        tdata_valid = 0;
+        s_axis_tdata = 16'b1010_0111_0010_0110; // Example AXI data
+        tvalid = 0;
 
         // Reset the DUT
         #10 arstn = 1;
 
         // Send AXI data
-        #10 tdata_valid = 1;
-        #1000 tdata_valid = 0; // Hold valid for a while
+        #10 tvalid = 1;
 
-        // Wait for transmission to complete
-        #100000;
+        // Wait for 2,215us
+        #2_215_500;
+        tvalid = 0; // Clear tvalid
+
+        #100;
+        tvalid = 1; // Send another data word
+        s_axis_tdata = 16'b1100_1010_0101_1101;
 
         $finish; // End simulation
     end
