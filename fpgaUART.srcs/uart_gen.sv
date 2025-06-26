@@ -28,8 +28,9 @@ logic tx_complete_rst;
 typedef enum logic [1:0] {
     IDLE, START, DATA, STOP
 } uart_state_t;
-uart_state_t state;
+uart_state_t state, next_state;
 
+/*
 // State transition logic
 always_ff @(posedge clk or negedge arstn) begin
     if (!arstn) begin
@@ -70,6 +71,55 @@ always_comb begin
         START: tx_output = 1'b0;
         DATA:  tx_output = tx_shift_reg[0];
         STOP:  tx_output = 1'b1;
+    endcase
+end */
+
+// State transition
+always_ff @(posedge clk or negedge arstn) begin
+    if (!arstn) state <= IDLE; 
+    else state <= next_state;
+end
+
+// FSM logic
+always_comb begin
+    case (state)
+        IDLE: 
+            if (start) begin
+                next_state = START;
+                tx_complete = 1'b0; // Clear transmission complete flag
+                tx_output = 1'b1;
+            end else begin
+                next_state = IDLE;
+                tx_complete = 1'b0;
+                tx_output = 1'b1;
+            end
+
+        START: 
+            if (baud_tick) begin
+                next_state = DATA; // Transition to DATA state after start bit
+                tx_output = 1'b0; // Start bit is low
+            end else begin
+                next_state = START; // Remain in START state until baud tick
+                tx_output = 1'b0; // Keep start bit low
+            end
+
+        DATA: 
+            if (baud_tick && bit_counter == 4'd7) begin
+                next_state = STOP;
+                tx_output = tx_shift_reg[0];
+            end
+            else begin
+                next_state = DATA;
+                tx_output = tx_shift_reg[0];
+            end
+
+        STOP: 
+            if (baud_tick) begin
+                next_state = IDLE;
+                data_out = tx_shift_reg; // Output the transmitted data
+                tx_complete = 1'b1; // Set transmission complete flag
+                tx_output = 1'b1; // Stop bit is high
+            end
     endcase
 end
 
