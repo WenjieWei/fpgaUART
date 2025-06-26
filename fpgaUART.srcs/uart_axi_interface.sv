@@ -55,32 +55,35 @@ always_comb begin
             end
 
         SEND_BYTE:
-            // If UART is busy, stay in SEND_BYTE state
-            if (uart_busy) begin
+            // UART busy = UART not in IDLE. 
+            // tx_complete only happens during the last cycle of STOP state (still uart busy)            
+            if (!uart_busy) begin
+                // if uart is not busy, but we have come here from IDLE
+                // that means we already have a new word to be sent. 
+                // this will always be the first byte to be sent. 
+                // so only need to issue uart_start and stay in this state
                 next_state = SEND_BYTE;
-                uart_start = 0; // Do not start transmission if UART is busy
-            end
+                uart_start = 1;
+            end 
 
-            // If UART is not busy, it could be one of the following situations: 
-            // 1. We have not sent anything yet, since the previous reset. 
-            //      In this case, start the transmission of the first byte.
-            //      do not increment byte index
-            // 2. transmission of the current byte (not last) is complete and tx_complete is high
-            // then we inspect the byte index to determine if we need to send another byte
-            // if yes: 
-            //      1) stay in SEND_BYTE state
-            //      2) increment byte index and send the next byte
-            // 3. UART transmitted all bytes and tx_complete is high
-            // if yes: 
-            //      1) go back to IDLE state
-            //      2) reset byte index to 0
-            
+            // if uart is busy but no tx_complete not detected, then we're still sending
+            // if tx_complete is high, then we need to consider the following cases:
+            // 1. do we have any more bytes to send? 
+            //  if yes, increment byte index and stay in SEND_BYTE
+            // 2. if not, return to IDLE. 
+            // if tx_complete is low, consider below: 
+            // 1. is this the first byte? 
+            //  if yes, check s_axis_tvalid. if there's a valid data, start sending
+            //  if not, return to IDLE
             else begin
-                if (uart_tx_complete || s_axis_tvalid) begin
+                if (!uart_tx_complete) begin
+                    next_state = SEND_BYTE; // Stay in SEND_BYTE state
+                    uart_start = 0; // Reset the start signal once started
+                end
+                else begin
                     if (byte_idx < NUM_BYTES - 1) begin
-                        if (uart_tx_complete) byte_idx = byte_idx + 1; // Increment byte index
+                        byte_idx = byte_idx + 1; // Increment byte index
                         next_state = SEND_BYTE; // Continue sending next byte
-                        s_axis_data_output = s_axis_tdata[(byte_idx * 8) +: 8]; // Extract the next byte to send
                         uart_start = 1; // Set start signal for UART transmission
                     end else begin
                         next_state = IDLE; // All bytes sent, go back to IDLE
@@ -88,10 +91,18 @@ always_comb begin
                         uart_start = 0; // Clear start signal
                         word_sent = 1; // Indicate that a word has been sent
                     end
-                end else begin
-                    next_state = IDLE; // Return to IDLE to wait for new data
                 end
             end
+    endcase
+end
+
+// data output
+always_comb begin
+    case (state)
+        IDLE: 
+            s_axis_data_output = 8'b0; // No data to send in IDLE state
+        SEND_BYTE:
+            s_axis_data_output = s_axis_tdata[(byte_idx * 8) +: 8]; // Extract the byte to send
     endcase
 end
 
